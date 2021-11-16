@@ -1,4 +1,5 @@
 # imports
+from os import SCHED_OTHER
 from TaxiFareModel.encoders import DistanceTransformer, TimeFeaturesEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -13,6 +14,9 @@ import joblib
 from TaxiFareModel.data import get_data, clean_data
 from sklearn.model_selection import train_test_split
 
+MLFLOW_URI = "https://mlflow.lewagon.co/"
+EXPERIMENT_NAME = "[NL] [Amsterdam] [MartonMunkacsi] TaxiFareModel + 1.0.0"
+
 
 class Trainer():
     def __init__(self, X, y):
@@ -23,6 +27,8 @@ class Trainer():
         self.pipeline = None
         self.X = X
         self.y = y
+        # self.mflow_URI = MLFLOW_URI
+        # self.experiment_name = EXPERIMENT_NAME
 
     def set_pipeline(self):
         """defines the pipeline as a class attribute"""
@@ -54,27 +60,27 @@ class Trainer():
         rmse = compute_rmse(y_pred, y_test)
         return rmse
 
-    # @memoized_property
-    # def mlflow_client(self):
-    #     mlflow.set_tracking_uri(MLFLOW_URI)
-    #     return MlflowClient()
+    @memoized_property
+    def mlflow_client(self):
+        mlflow.set_tracking_uri(MLFLOW_URI)
+        return MlflowClient()
 
-    # @memoized_property
-    # def mlflow_experiment_id(self):
-    #     try:
-    #         return self.mlflow_client.create_experiment(self.experiment_name)
-    #     except BaseException:
-    #         return self.mlflow_client.get_experiment_by_name(self.experiment_name).experiment_id
+    @memoized_property
+    def mlflow_experiment_id(self):
+        try:
+            return self.mlflow_client.create_experiment(self.experiment_name)
+        except BaseException:
+            return self.mlflow_client.get_experiment_by_name(self.experiment_name).experiment_id
 
-    # @memoized_property
-    # def mlflow_run(self):
-    #     return self.mlflow_client.create_run(self.mlflow_experiment_id)
+    @memoized_property
+    def mlflow_run(self):
+        return self.mlflow_client.create_run(self.mlflow_experiment_id)
 
-    # def mlflow_log_param(self, key, value):
-    #     self.mlflow_client.log_param(self.mlflow_run.info.run_id, key, value)
+    def mlflow_log_param(self, key, value):
+        self.mlflow_client.log_param(self.mlflow_run.info.run_id, key, value)
 
-    # def mlflow_log_metric(self, key, value):
-    #     self.mlflow_client.log_metric(self.mlflow_run.info.run_id, key, value)
+    def mlflow_log_metric(self, key, value):
+        self.mlflow_client.log_metric(self.mlflow_run.info.run_id, key, value)
 
 
     def save_model(self):
@@ -98,26 +104,30 @@ if __name__ == "__main__":
     evaluate_data = my_class.evaluate(X_test, y_test)
     my_class.save_model()
     print(evaluate_data)
+    # estimator = 'linear'
+    # metric_value = evaluate_data
+    # my_class.mlflow_log_param("estimator", estimator)
+    # my_class.mlflow_log_metric('rmse', metric_value)
 
-    MLFLOW_URI = "https://mlflow.lewagon.co/"
-    EXPERIMENT_NAME = "[NL] [Amsterdam] [MartonMunkacsi] TaxiFareModel + 1.0.0"
-    mlflow.set_tracking_uri(MLFLOW_URI)
+    # MLFLOW_URI = "https://mlflow.lewagon.co/"
+    # EXPERIMENT_NAME = "[NL] [Amsterdam] [MartonMunkacsi] TaxiFareModel + 1.0.0"
+    # mlflow.set_tracking_uri(MLFLOW_URI)
 
-    client = MlflowClient()
+    # client = MlflowClient()
 
-    try:
-        experiment_id = client.create_experiment(EXPERIMENT_NAME)
-    except BaseException:
-        experiment_id = client.get_experiment_by_name(
-            EXPERIMENT_NAME).experiment_id
+    # try:
+    #     experiment_id = client.create_experiment(EXPERIMENT_NAME)
+    # except BaseException:
+    #     experiment_id = client.get_experiment_by_name(
+    #         EXPERIMENT_NAME).experiment_id
 
-    yourname = "Marton"
+    # yourname = "Marton"
 
-    if yourname is None:
-        print("please define your name, it will be used as a parameter to log")
+    # if yourname is None:
+    #     print("please define your name, it will be used as a parameter to log")
 
-    for model in ["linear", "Randomforest"]:
-        run = client.create_run(experiment_id)
-        client.log_metric(run.info.run_id, "rmse", evaluate_data)
-        client.log_param(run.info.run_id, "model", model)
-        client.log_param(run.info.run_id, "student_name", yourname)
+    # for model in ["linear", "Randomforest"]:
+    #     run = client.create_run(experiment_id)
+    #     client.log_metric(run.info.run_id, "rmse", evaluate_data)
+    #     client.log_param(run.info.run_id, "model", model)
+    #     client.log_param(run.info.run_id, "student_name", yourname)
