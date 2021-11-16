@@ -1,0 +1,15 @@
+artifact_uri: file:///home/marton/code/MartonMunkacsi/TaxiFareModel/mlruns/1/abf00113aef540baa48a59bb386ca005/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: abf00113aef540baa48a59bb386ca005
+run_uuid: abf00113aef540baa48a59bb386ca005
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1637064035015
+status: 1
+tags: []
+user_id: unknown
