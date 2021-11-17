@@ -43,7 +43,7 @@ class Trainer():
         ]), ('time', time_pipe, ['pickup_datetime'])],
                                         remainder="drop")
         pipe = Pipeline([('preproc', preproc_pipe),
-                        ('linear_model', Lasso())])
+                        ('linear_model', LinearRegression())])
         return pipe
 
     def run(self):
