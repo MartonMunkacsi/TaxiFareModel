@@ -1,12 +1,15 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-AWS_BUCKET_PATH = "s3://wagon-public-datasets/taxi-fare-train.csv"
+
+# AWS_BUCKET_PATH = "s3://wagon-public-datasets/taxi-fare-train.csv"
+BUCKET_TRAIN_DATA_PATH = 'data/train_1k.csv'
+BUCKET_NAME = 'wagon-data-745-munkacsi'
 
 
-def get_data(nrows=10_000):
-    '''returns a DataFrame with nrows from s3 bucket'''
-    df = pd.read_csv(AWS_BUCKET_PATH, nrows=nrows)
+def get_data():
+    """method to get the training data (or a portion of it) from google cloud bucket"""
+    df = pd.read_csv(f"gs://{BUCKET_NAME}/{BUCKET_TRAIN_DATA_PATH}",nrows=1000)
     return df
 
 
